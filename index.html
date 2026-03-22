@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🦈 BLACK CROWN STORE - Catálogo de Productos</title>
+    
+    <!-- LEAFLET MAP CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-control-geocoder/1.13.0/Control.Geocoder.min.css" />
+    
     <style>
         * {
             margin: 0;
@@ -360,12 +365,24 @@
             text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.8);
         }
 
-        .map-container iframe {
+        #mapContainer {
             width: 100%;
             height: 350px;
             border: 2px solid;
             border-color: #808080 #ffffff #ffffff #808080;
             display: block;
+            border-radius: 2px;
+            z-index: 10;
+        }
+
+        .map-info {
+            background: #e8f0f8;
+            border: 1px solid #b0c4de;
+            padding: 6px;
+            margin-top: 8px;
+            font-size: 11px;
+            color: var(--text-dark);
+            border-radius: 2px;
         }
 
         .action-buttons {
@@ -497,8 +514,8 @@
                 width: 100%;
             }
 
-            .map-container iframe {
-                height: 250px;
+            #mapContainer {
+                height: 300px;
             }
         }
     </style>
@@ -551,7 +568,7 @@
                     </div>
                     <div class="form-group">
                         <label for="direccion">Dirección</label>
-                        <input type="text" id="direccion" placeholder="Tu dirección">
+                        <input type="text" id="direccion" placeholder="Selecciona ubicación en el mapa">
                     </div>
                     <div class="form-group" style="grid-column: 1 / -1;">
                         <label for="productos">Productos Seleccionados</label>
@@ -559,10 +576,11 @@
                     </div>
                 </div>
 
-                <!-- MAPA -->
+                <!-- MAPA INTERACTIVO -->
                 <div class="map-container">
-                    <div class="map-title">📍 Ubicación de Entrega</div>
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3360.8367896225507!2d-116.97161292345127!3d32.51502397222827!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80d92d8d8d8d8d8d%3A0x8d8d8d8d8d8d8d8d!2sTijuana%2C%20Baja%20California!5e0!3m2!1ses-ES!2smx!4v1234567890" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    <div class="map-title">📍 Haz click en el mapa para seleccionar tu ubicación (Laptop/Móvil)</div>
+                    <div id="mapContainer"></div>
+                    <div class="map-info" id="mapInfo">💡 Haz click en cualquier lugar del mapa para marcar tu ubicación de entrega</div>
                 </div>
 
                 <!-- BOTONES DE ACCIÓN -->
@@ -581,6 +599,10 @@
         <p style="margin-top: 8px; font-size: 10px; color: #666;">Microsoft Windows™ XP - Sistema de Ventas BLACK CROWN™</p>
     </footer>
 
+    <!-- LEAFLET JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-control-geocoder/1.13.0/Control.Geocoder.min.js"></script>
+
     <script>
         // ============================================================
         // CONFIGURACIÓN
@@ -592,6 +614,11 @@
             emailjs_service_id: 'TU_SERVICE_ID_AQUI',
             emailjs_template_id: 'TU_TEMPLATE_ID_AQUI'
         };
+
+        // Variables globales del mapa
+        let map;
+        let marker;
+        let selectedCoords = null;
 
         // ============================================================
         // BASE DE DATOS DE PRODUCTOS
@@ -684,6 +711,84 @@
         ];
 
         // ============================================================
+        // INICIALIZAR MAPA CON LEAFLET
+        // ============================================================
+        function inicializarMapa() {
+            // Crear mapa centrado en Tijuana
+            map = L.map('mapContainer').setView([32.5149, -116.9718], 13);
+
+            // Agregar capa de OpenStreetMap
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors',
+                maxZoom: 19,
+                tileSize: 256
+            }).addTo(map);
+
+            // Evento para click en el mapa
+            map.on('click', function(e) {
+                const lat = e.latlng.lat;
+                const lng = e.latlng.lng;
+                
+                seleccionarUbicacion(lat, lng);
+            });
+
+            // Agregar marker inicial
+            marker = L.marker([32.5149, -116.9718], {
+                draggable: true,
+                title: 'Tu ubicación'
+            }).addTo(map).bindPopup('📍 Tu ubicación de entrega');
+
+            marker.on('dragend', function() {
+                const pos = marker.getLatLng();
+                seleccionarUbicacion(pos.lat, pos.lng);
+            });
+
+            // Hacer que el mapa sea responsivo
+            setTimeout(() => map.invalidateSize(), 100);
+        }
+
+        // ============================================================
+        // SELECCIONAR UBICACIÓN EN EL MAPA
+        // ============================================================
+        function seleccionarUbicacion(lat, lng) {
+            selectedCoords = { lat, lng };
+
+            // Mover marker a la nueva ubicación
+            marker.setLatLng([lat, lng]);
+            map.setView([lat, lng], 16);
+
+            // Obtener dirección usando Nominatim (OpenStreetMap Geocoding)
+            obtenerDireccion(lat, lng);
+        }
+
+        // ============================================================
+        // OBTENER DIRECCIÓN DESDE COORDENADAS
+        // ============================================================
+        function obtenerDireccion(lat, lng) {
+            const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const direccion = data.address.road || data.address.street || 
+                                    data.address.neighbourhood || data.address.city || 
+                                    `${lat}, ${lng}`;
+                    
+                    document.getElementById('direccion').value = direccion;
+                    document.getElementById('mapInfo').textContent = `✅ Ubicación seleccionada: ${direccion}`;
+                    guardarDatos();
+                    mostrarAlerta('✅ UBICACIÓN GUARDADA', `Dirección: ${direccion}`, 'success');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    const coordsText = `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+                    document.getElementById('direccion').value = coordsText;
+                    document.getElementById('mapInfo').textContent = `✅ Ubicación: ${coordsText}`;
+                    guardarDatos();
+                });
+        }
+
+        // ============================================================
         // CARGAR PRODUCTOS EN GALERÍA
         // ============================================================
         function cargarProductos() {
@@ -771,7 +876,7 @@
             }
 
             if (!direccion || direccion.length < 5) {
-                errores.push('Por favor ingresa una dirección válida');
+                errores.push('Por favor selecciona una ubicación en el mapa');
             }
 
             if (productosSeleccionados === 0) {
@@ -830,7 +935,7 @@
             // Simular envío (sin EmailJS)
             setTimeout(() => {
                 mostrarAlerta('✅ ¡ÉXITO!', 'Tu pedido ha sido registrado. La dueña se contactará pronto.', 'success');
-                guardarPedido({ nombre, telefono, correo, direccion, productos });
+                guardarPedido({ nombre, telefono, correo, direccion, productos, coords: selectedCoords });
                 limpiarFormulario();
             }, 1500);
         }
@@ -858,6 +963,7 @@
             document.getElementById('direccion').value = '';
             document.querySelectorAll('.product-checkbox input[type="checkbox"]').forEach(cb => cb.checked = false);
             actualizarProductosSeleccionados();
+            document.getElementById('mapInfo').textContent = '💡 Haz click en cualquier lugar del mapa para marcar tu ubicación de entrega';
         }
 
         // ============================================================
@@ -888,15 +994,18 @@
         function contactarWhatsApp() {
             const nombre = document.getElementById('nombre').value.trim() || 'Cliente';
             const productos = document.getElementById('productos').value;
+            const direccion = document.getElementById('direccion').value.trim();
 
             const productosMsg = productos !== 'Ningún producto seleccionado' 
                 ? `\n\nProductos de interés:\n${productos}`
                 : '';
 
+            const direccionMsg = direccion ? `\n\nUbicación: ${direccion}` : '';
+
             const numero = CONFIG.whatsapp.replace(/\D/g, '');
             const mensaje = encodeURIComponent(
                 `¡Hola! Soy ${nombre}.\n\n` +
-                `Tengo interés en los siguientes productos:${productosMsg}\n\n` +
+                `Tengo interés en los siguientes productos:${productosMsg}${direccionMsg}\n\n` +
                 `¿Cuáles son los precios? 👑`
             );
 
@@ -956,6 +1065,7 @@
             console.log('🦈 BLACK CROWN STORE - Sistema Iniciado');
             
             cargarProductos();
+            inicializarMapa();
             cargarDatos();
             agregarEventoFormulario();
             actualizarProductosSeleccionados();
