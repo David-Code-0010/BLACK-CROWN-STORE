@@ -376,7 +376,6 @@
             position: relative;
         }
 
-        /* ESTILOS PARA EL BUSCADOR GEOSEARCH */
         .geosearch-control {
             position: absolute !important;
             top: 10px !important;
@@ -653,11 +652,11 @@
 
     <script>
         // ============================================================
-        // CONFIGURACIÓN
+        // CONFIGURACIÓN - ✅ NÚMERO CORREGIDO
         // ============================================================
         const CONFIG = {
             email: 'neftamercado@gmail.com',
-            whatsapp: '52646122 7909',
+            whatsapp: '+52 465 122 7909',
             emailjs_public_key: 'TU_PUBLIC_KEY_AQUI',
             emailjs_service_id: 'TU_SERVICE_ID_AQUI',
             emailjs_template_id: 'TU_TEMPLATE_ID_AQUI'
@@ -763,19 +762,15 @@
         // INICIALIZAR MAPA CON LEAFLET + GEOSEARCH
         // ============================================================
         function inicializarMapa() {
-            // Crear mapa centrado en Tijuana
             map = L.map('mapContainer').setView([32.5149, -116.9718], 13);
 
-            // Agregar capa de OpenStreetMap
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '© OpenStreetMap contributors',
                 maxZoom: 19,
                 tileSize: 256
             }).addTo(map);
 
-            // Agregar GeoSearch (buscador con lupa)
             const { GeoSearchControl, OpenStreetMapProvider } = window.GeoSearch;
-
             const provider = new OpenStreetMapProvider();
 
             geosearch = new GeoSearchControl({
@@ -804,21 +799,18 @@
 
             map.addControl(geosearch);
 
-            // Evento cuando se selecciona un resultado del buscador
             map.on('geosearch/showlocation', function(result) {
                 const lat = result.location.y;
                 const lng = result.location.x;
                 seleccionarUbicacion(lat, lng);
             });
 
-            // Evento para click en el mapa
             map.on('click', function(e) {
                 const lat = e.latlng.lat;
                 const lng = e.latlng.lng;
                 seleccionarUbicacion(lat, lng);
             });
 
-            // Agregar marker inicial
             marker = L.marker([32.5149, -116.9718], {
                 draggable: true,
                 title: 'Tu ubicación'
@@ -829,7 +821,6 @@
                 seleccionarUbicacion(pos.lat, pos.lng);
             });
 
-            // Hacer que el mapa sea responsivo
             setTimeout(() => map.invalidateSize(), 100);
         }
 
@@ -838,12 +829,8 @@
         // ============================================================
         function seleccionarUbicacion(lat, lng) {
             selectedCoords = { lat, lng };
-
-            // Mover marker a la nueva ubicación
             marker.setLatLng([lat, lng]);
             map.setView([lat, lng], 16);
-
-            // Obtener dirección usando Nominatim (OpenStreetMap Geocoding)
             obtenerDireccion(lat, lng);
         }
 
