@@ -151,12 +151,6 @@
             color: #ffffff;
         }
 
-        .btn-contact {
-            background: linear-gradient(180deg, #4a9eff 0%, #2e5f8a 100%);
-            border-color: #6bb6ff #1a4d7a #1a4d7a #6bb6ff;
-            color: #ffffff;
-        }
-
         .section-title {
             text-align: center;
             margin-bottom: 40px;
@@ -244,7 +238,6 @@
             margin: 4px;
         }
 
-        /* CAROUSEL CONTROLS */
         .carousel-nav {
             position: absolute;
             top: 50%;
@@ -447,25 +440,6 @@
         .geosearch-control input:focus {
             outline: none !important;
             background: #e8f0f8 !important;
-        }
-
-        .geosearch-popup {
-            background: #c0c0c0 !important;
-            border: 2px solid #808080 !important;
-            border-radius: 2px !important;
-            box-shadow: inset 1px 1px 0 #dfdfdf, inset -1px -1px 0 #808080 !important;
-        }
-
-        .geosearch-popup li {
-            background: #c0c0c0 !important;
-            border-bottom: 1px solid #dfdfdf !important;
-            padding: 6px 8px !important;
-            font-size: 11px !important;
-            color: var(--text-dark) !important;
-        }
-
-        .geosearch-popup li:hover {
-            background: #dfdfdf !important;
         }
 
         .map-info {
@@ -691,9 +665,9 @@
 
     <!-- FOOTER -->
     <footer>
-        <p>© 2026 BLACK CROWN STORE | Todos los derechos reservados 🦈</p>
+        <p>© 2026 AQUA STORE | Todos los derechos reservados 🦈</p>
         <p>Para conocer precios, contacta con la dueña 👑</p>
-        <p style="margin-top: 8px; font-size: 10px; color: #666;">Microsoft Windows™ XP - Sistema de Ventas BLACK CROWN™</p>
+        <p style="margin-top: 8px; font-size: 10px; color: #666;">Microsoft Windows™ XP - Sistema de Ventas Aqua SHARKY™</p>
     </footer>
 
     <!-- LEAFLET JS -->
@@ -702,12 +676,13 @@
 
     <script>
         // ============================================================
-        // CONFIGURACIÓN
+        // CONFIGURACIÓN - URLS DE GITHUB
         // ============================================================
+        const GITHUB_RAW_URL = 'https://raw.githubusercontent.com/David-Code-0010/BLACK-CROWN-STORE/main/';
+
         const CONFIG = {
             email: 'neftamercado@gmail.com',
             whatsapp: '+52 465 122 7909',
-            imagePath: 'img/', // Ruta donde están tus imágenes
             emailjs_public_key: 'TU_PUBLIC_KEY_AQUI',
             emailjs_service_id: 'TU_SERVICE_ID_AQUI',
             emailjs_template_id: 'TU_TEMPLATE_ID_AQUI'
@@ -720,7 +695,7 @@
         let geosearch;
 
         // ============================================================
-        // BASE DE DATOS DE PRODUCTOS CON IMÁGENES REALES
+        // BASE DE DATOS DE PRODUCTOS CON IMÁGENES DE GITHUB
         // ============================================================
         const PRODUCTOS = [
             {
@@ -834,17 +809,15 @@
                 const card = document.createElement('div');
                 card.className = 'product-card';
                 
-                // Generar HTML para carousel si hay múltiples imágenes
                 let imagenHTML = '';
-                let carouselHTML = '';
                 
                 if (producto.imagenes.length > 1) {
                     imagenHTML = `
                         <div class="product-image-container">
-                            <img src="${CONFIG.imagePath}${producto.imagenes[0]}" alt="${producto.nombre}" class="product-image" onerror="this.src='https://via.placeholder.com/300x220?text=Imagen+No+Disponible'" data-product-id="${producto.id}" data-current-image="0">
+                            <img src="${GITHUB_RAW_URL}${producto.imagenes[0]}" alt="${producto.nombre}" class="product-image" onerror="this.src='https://via.placeholder.com/300x220?text=Imagen+No+Disponible'" data-product-id="${producto.id}" data-current-image="0">
                             <div class="carousel-nav">
-                                <button class="carousel-btn" onclick="cambiarImagen(${producto.id}, -1)">◀ Anterior</button>
-                                <button class="carousel-btn" onclick="cambiarImagen(${producto.id}, 1)">Siguiente ▶</button>
+                                <button class="carousel-btn" onclick="cambiarImagen(${producto.id}, -1)">◀</button>
+                                <button class="carousel-btn" onclick="cambiarImagen(${producto.id}, 1)">▶</button>
                             </div>
                             <div class="carousel-indicator">
                                 <span id="img-count-${producto.id}">1</span>/${producto.imagenes.length}
@@ -854,7 +827,7 @@
                 } else {
                     imagenHTML = `
                         <div class="product-image-container">
-                            <img src="${CONFIG.imagePath}${producto.imagenes[0]}" alt="${producto.nombre}" class="product-image" onerror="this.src='https://via.placeholder.com/300x220?text=Imagen+No+Disponible'">
+                            <img src="${GITHUB_RAW_URL}${producto.imagenes[0]}" alt="${producto.nombre}" class="product-image" onerror="this.src='https://via.placeholder.com/300x220?text=Imagen+No+Disponible'">
                         </div>
                     `;
                 }
@@ -875,8 +848,6 @@
                 `;
                 
                 grid.appendChild(card);
-                
-                // Guardar datos del carousel
                 window[`imagenes_${producto.id}`] = producto.imagenes;
             });
         }
@@ -892,7 +863,7 @@
             let currentIndex = parseInt(img.dataset.currentImage);
             currentIndex = (currentIndex + direccion + imagenes.length) % imagenes.length;
 
-            img.src = CONFIG.imagePath + imagenes[currentIndex];
+            img.src = GITHUB_RAW_URL + imagenes[currentIndex];
             img.dataset.currentImage = currentIndex;
             document.getElementById(`img-count-${productId}`).textContent = currentIndex + 1;
         }
@@ -976,7 +947,7 @@
         }
 
         // ============================================================
-        // MOSTRAR ALERTA PERSONALIZADA
+        // MOSTRAR ALERTA
         // ============================================================
         function mostrarAlerta(titulo, mensaje, tipo = 'info') {
             const alertBox = document.createElement('div');
@@ -1047,7 +1018,7 @@
         }
 
         // ============================================================
-        // WHATSAPP FUNCTIONS
+        // WHATSAPP
         // ============================================================
         function openWhatsApp() {
             abrirWhatsApp('Cliente');
@@ -1056,9 +1027,7 @@
         function abrirWhatsApp(nombre = 'Cliente') {
             const numero = CONFIG.whatsapp.replace(/\D/g, '');
             const mensaje = encodeURIComponent(
-                `¡Hola! Soy ${nombre}.\n\n` +
-                `Me interesa conocer los precios de los productos del catálogo de BLACK CROWN STORE.\n\n` +
-                `¿Podrías ayudarme? 👑`
+                `¡Hola! Soy ${nombre}.\n\nMe interesa conocer los precios de los productos del catálogo de BLACK CROWN STORE.\n\n¿Podrías ayudarme? 👑`
             );
             
             const url = `https://wa.me/${numero}?text=${mensaje}`;
@@ -1078,9 +1047,7 @@
 
             const numero = CONFIG.whatsapp.replace(/\D/g, '');
             const mensaje = encodeURIComponent(
-                `¡Hola! Soy ${nombre}.\n\n` +
-                `Tengo interés en los siguientes productos:${productosMsg}${direccionMsg}\n\n` +
-                `¿Cuáles son los precios? 👑`
+                `¡Hola! Soy ${nombre}.\n\nTengo interés en los siguientes productos:${productosMsg}${direccionMsg}\n\n¿Cuáles son los precios? 👑`
             );
 
             const url = `https://wa.me/${numero}?text=${mensaje}`;
@@ -1088,7 +1055,7 @@
         }
 
         // ============================================================
-        // FORMULARIO FUNCTIONS
+        // SCROLL Y DATOS
         // ============================================================
         function scrollToForm() {
             const form = document.getElementById('contactForm');
@@ -1124,7 +1091,7 @@
         }
 
         // ============================================================
-        // MAPA FUNCTIONS
+        // MAPA
         // ============================================================
         function inicializarMapa() {
             map = L.map('mapContainer').setView([32.5149, -116.9718], 13);
