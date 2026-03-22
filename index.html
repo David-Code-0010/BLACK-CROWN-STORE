@@ -34,7 +34,6 @@
             overflow-x: hidden;
         }
 
-        /* Efecto de agua con ondas estilo anime */
         body::before {
             content: '';
             position: fixed;
@@ -49,7 +48,6 @@
             z-index: 1;
         }
 
-        /* Siluetas de tiburones animadas */
         body::after {
             content: '';
             position: fixed;
@@ -79,7 +77,6 @@
             padding: 20px;
         }
 
-        /* HEADER - Estilo Windows 95 */
         header {
             background: linear-gradient(180deg, #c0c0c0 0%, #dfdfdf 50%, #c0c0c0 100%);
             border: 3px solid;
@@ -118,7 +115,6 @@
             gap: 8px;
         }
 
-        /* BOTONES - Estilo Windows 95 */
         button {
             font-family: 'MS Sans Serif', 'Tahoma', sans-serif;
             font-size: 11px;
@@ -156,7 +152,6 @@
             color: #ffffff;
         }
 
-        /* TÍTULO */
         .section-title {
             text-align: center;
             margin-bottom: 40px;
@@ -169,7 +164,6 @@
             font-weight: bold;
         }
 
-        /* VENTANA - Estilo Windows 95 */
         .window-frame {
             background: #c0c0c0;
             border: 3px solid;
@@ -196,7 +190,6 @@
             padding: 12px;
         }
 
-        /* GALERÍA DE PRODUCTOS */
         .products-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -281,7 +274,6 @@
             font-size: 11px;
         }
 
-        /* FORMULARIO */
         .contact-form {
             background: #c0c0c0;
             border: 3px solid;
@@ -350,7 +342,6 @@
             min-height: 80px;
         }
 
-        /* MAPA */
         .map-container {
             background: #c0c0c0;
             border: 2px solid;
@@ -377,7 +368,6 @@
             display: block;
         }
 
-        /* BOTONES DE ACCIÓN */
         .action-buttons {
             display: flex;
             gap: 12px;
@@ -402,7 +392,6 @@
             font-weight: bold;
         }
 
-        /* FOOTER */
         footer {
             background: #c0c0c0;
             border: 3px solid;
@@ -421,7 +410,63 @@
             text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.8);
         }
 
-        /* RESPONSIVE */
+        .alert-box {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #c0c0c0;
+            color: #000000;
+            padding: 12px 16px;
+            border: 3px solid;
+            border-color: #ffffff #808080 #808080 #ffffff;
+            border-radius: 2px;
+            box-shadow: inset 1px 1px 0 #dfdfdf, inset -1px -1px 0 #808080, 2px 2px 8px rgba(0,0,0,0.4);
+            z-index: 9999;
+            max-width: 350px;
+            font-family: 'MS Sans Serif', Tahoma, sans-serif;
+            font-size: 11px;
+            animation: slideIn 0.3s ease;
+        }
+
+        .alert-box.success {
+            background: linear-gradient(180deg, #25d366 0%, #128c7e 100%);
+            color: #ffffff;
+            border-color: #1ea952 #0a5c47 #0a5c47 #1ea952;
+        }
+
+        .alert-box.error {
+            background: linear-gradient(180deg, #ff1493 0%, #c71585 100%);
+            color: #ffffff;
+            border-color: #ff69b4 #8b0a50 #8b0a50 #ff69b4;
+        }
+
+        .alert-title {
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+
         @media (max-width: 768px) {
             .section-title {
                 font-size: 22px;
@@ -456,16 +501,6 @@
                 height: 250px;
             }
         }
-
-        /* ANIMACIÓN RETRO */
-        @keyframes blink {
-            0%, 50% { opacity: 1; }
-            51%, 100% { opacity: 0; }
-        }
-
-        .blink {
-            animation: blink 1s infinite;
-        }
     </style>
 </head>
 <body>
@@ -482,7 +517,7 @@
         </header>
 
         <!-- TÍTULO -->
-        <h1 class="section-title">🦈 CATÁLOGO DE PRODUCTOS 🦈</h1>
+        <h1 class="section-title" id="mainTitle">🦈 CATÁLOGO DE PRODUCTOS 🦈</h1>
 
         <!-- GALERÍA DE PRODUCTOS -->
         <div class="window-frame">
@@ -498,7 +533,7 @@
         </div>
 
         <!-- FORMULARIO DE CONTACTO -->
-        <div class="contact-form">
+        <div class="contact-form" id="contactForm">
             <div class="form-title">📝 Detalles del Pedido</div>
             <div class="form-content">
                 <div class="form-grid">
@@ -546,5 +581,387 @@
         <p style="margin-top: 8px; font-size: 10px; color: #666;">Microsoft Windows™ XP - Sistema de Ventas BLACK CROWN™</p>
     </footer>
 
+    <script>
+        // ============================================================
+        // CONFIGURACIÓN
+        // ============================================================
+        const CONFIG = {
+            email: 'neftamercado@gmail.com',
+            whatsapp: '+52 1 646 122 7909',
+            emailjs_public_key: 'TU_PUBLIC_KEY_AQUI',
+            emailjs_service_id: 'TU_SERVICE_ID_AQUI',
+            emailjs_template_id: 'TU_TEMPLATE_ID_AQUI'
+        };
+
+        // ============================================================
+        // BASE DE DATOS DE PRODUCTOS
+        // ============================================================
+        const PRODUCTOS = [
+            {
+                id: 1,
+                nombre: 'SOPORTE PARA CELULAR',
+                descripcion: 'En la compra de tu soporte, te llevas de regalo un dije de pentágrama de murcielago',
+                imagen: 'https://via.placeholder.com/300x220?text=Soporte+Celular',
+                categoria: 'Accesorios'
+            },
+            {
+                id: 2,
+                nombre: 'SET 2PZ BLUSA Y BOOMER',
+                descripcion: 'Boomer es un short de orales que da una ilusión de ser falda',
+                imagen: 'https://via.placeholder.com/300x220?text=Set+Blusa+Boomer',
+                categoria: 'Ropa'
+            },
+            {
+                id: 3,
+                nombre: 'ZAPATILLAS DAGUES',
+                descripcion: 'Zapatillas 2.5 al 6. Se pueden adquirir a 10 pagos',
+                imagen: 'https://via.placeholder.com/300x220?text=Zapatillas+Dagues',
+                categoria: 'Calzado'
+            },
+            {
+                id: 4,
+                nombre: 'ZAPATILLAS SPIKE BUTTERFLY',
+                descripcion: 'Tallas 23 al 27mx. Diseño gótico exclusivo',
+                imagen: 'https://via.placeholder.com/300x220?text=Zapatillas+Spike',
+                categoria: 'Calzado'
+            },
+            {
+                id: 5,
+                nombre: 'ESPEJO LED ESTILO HOLLYWOOD',
+                descripcion: 'Espejo con iluminación LED profesional para maquillaje',
+                imagen: 'https://via.placeholder.com/300x220?text=Espejo+LED',
+                categoria: 'Belleza'
+            },
+            {
+                id: 6,
+                nombre: 'BOTINES HERRAJES',
+                descripcion: 'Botines negros con herrajes de acero inoxidable',
+                imagen: 'https://via.placeholder.com/300x220?text=Botines',
+                categoria: 'Calzado'
+            },
+            {
+                id: 7,
+                nombre: 'LLAVEROS MONSTER EYE',
+                descripcion: 'Llaveros decorativos con diseño de ojos monster',
+                imagen: 'https://via.placeholder.com/300x220?text=Llaveros',
+                categoria: 'Accesorios'
+            },
+            {
+                id: 8,
+                nombre: 'PAQUETE DE CALZONES DARKS 4PZ',
+                descripcion: 'Paquete de 4 piezas de calzones con diseño oscuro',
+                imagen: 'https://via.placeholder.com/300x220?text=Calzones+4pz',
+                categoria: 'Ropa'
+            },
+            {
+                id: 9,
+                nombre: 'PAQUETE DE CALZONES DARKS 10PZ',
+                descripcion: 'Paquete premium de 10 piezas de calzones',
+                imagen: 'https://via.placeholder.com/300x220?text=Calzones+10pz',
+                categoria: 'Ropa'
+            },
+            {
+                id: 10,
+                nombre: 'VESTIDO DUO COLOR',
+                descripcion: 'Vestido elegante combinado en dos colores. Tallas 2XS,XS,S,M,L,XL',
+                imagen: 'https://via.placeholder.com/300x220?text=Vestido+Duo',
+                categoria: 'Ropa'
+            },
+            {
+                id: 11,
+                nombre: 'ZAPATILLAS DUO COLOR',
+                descripcion: 'Zapatillas combinadas en dos tonos. Tallas 22 al 27mx',
+                imagen: 'https://via.placeholder.com/300x220?text=Zapatillas+Duo',
+                categoria: 'Calzado'
+            },
+            {
+                id: 12,
+                nombre: 'ESPEJO ATAUD 20cm X 34cm',
+                descripcion: 'Espejo decorativo con forma de ataúd. Material premium',
+                imagen: 'https://via.placeholder.com/300x220?text=Espejo+Ataud',
+                categoria: 'Decoración'
+            }
+        ];
+
+        // ============================================================
+        // CARGAR PRODUCTOS EN GALERÍA
+        // ============================================================
+        function cargarProductos() {
+            const grid = document.getElementById('productsGrid');
+            grid.innerHTML = '';
+
+            PRODUCTOS.forEach((producto) => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.innerHTML = `
+                    <div class="product-card-header">
+                        📦 ${producto.categoria}
+                    </div>
+                    <img src="${producto.imagen}" alt="${producto.nombre}" class="product-image" onerror="this.src='https://via.placeholder.com/300x220?text=No+Disponible'">
+                    <div class="product-info">
+                        <div class="product-name">${producto.nombre}</div>
+                        <div class="product-description">${producto.descripcion}</div>
+                        <div class="product-checkbox">
+                            <input type="checkbox" id="prod_${producto.id}" value="${producto.nombre}" onchange="actualizarProductosSeleccionados()">
+                            <label for="prod_${producto.id}">Seleccionar</label>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // ============================================================
+        // ACTUALIZAR PRODUCTOS SELECCIONADOS
+        // ============================================================
+        function actualizarProductosSeleccionados() {
+            const productosTextarea = document.getElementById('productos');
+            const checkboxes = document.querySelectorAll('.product-checkbox input[type="checkbox"]:checked');
+            
+            let productosSeleccionados = [];
+            checkboxes.forEach((checkbox, index) => {
+                productosSeleccionados.push(`${index + 1}. ${checkbox.value}`);
+            });
+
+            if (productosSeleccionados.length === 0) {
+                productosTextarea.value = 'Ningún producto seleccionado';
+            } else {
+                productosTextarea.value = productosSeleccionados.join('\n');
+            }
+
+            mostrarConteoProductos();
+        }
+
+        // ============================================================
+        // MOSTRAR CONTEO DE PRODUCTOS EN TÍTULO
+        // ============================================================
+        function mostrarConteoProductos() {
+            const count = document.querySelectorAll('.product-checkbox input[type="checkbox"]:checked').length;
+            const titulo = document.getElementById('mainTitle');
+            
+            if (count > 0) {
+                titulo.textContent = `🦈 CATÁLOGO DE PRODUCTOS (${count} seleccionados) 🦈`;
+            } else {
+                titulo.textContent = '🦈 CATÁLOGO DE PRODUCTOS 🦈';
+            }
+        }
+
+        // ============================================================
+        // VALIDAR FORMULARIO
+        // ============================================================
+        function validarFormulario() {
+            const nombre = document.getElementById('nombre').value.trim();
+            const telefono = document.getElementById('telefono').value.trim();
+            const correo = document.getElementById('correo').value.trim();
+            const direccion = document.getElementById('direccion').value.trim();
+            const productosSeleccionados = document.querySelectorAll('.product-checkbox input[type="checkbox"]:checked').length;
+
+            let errores = [];
+
+            if (!nombre || nombre.length < 3) {
+                errores.push('Por favor ingresa un nombre válido (mínimo 3 caracteres)');
+            }
+
+            if (!telefono || telefono.length < 10) {
+                errores.push('Por favor ingresa un teléfono válido');
+            }
+
+            if (!correo || !validarEmail(correo)) {
+                errores.push('Por favor ingresa un correo válido');
+            }
+
+            if (!direccion || direccion.length < 5) {
+                errores.push('Por favor ingresa una dirección válida');
+            }
+
+            if (productosSeleccionados === 0) {
+                errores.push('Por favor selecciona al menos un producto');
+            }
+
+            return { valido: errores.length === 0, errores };
+        }
+
+        // ============================================================
+        // VALIDAR EMAIL
+        // ============================================================
+        function validarEmail(email) {
+            const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return regex.test(email);
+        }
+
+        // ============================================================
+        // MOSTRAR ALERTA PERSONALIZADA
+        // ============================================================
+        function mostrarAlerta(titulo, mensaje, tipo = 'info') {
+            const alertBox = document.createElement('div');
+            alertBox.className = `alert-box ${tipo}`;
+            alertBox.innerHTML = `
+                <div class="alert-title">${titulo}</div>
+                <small>${mensaje}</small>
+            `;
+
+            document.body.appendChild(alertBox);
+
+            setTimeout(() => {
+                alertBox.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => alertBox.remove(), 300);
+            }, 5000);
+        }
+
+        // ============================================================
+        // ENVIAR PEDIDO POR EMAIL
+        // ============================================================
+        async function enviarPedido() {
+            const validacion = validarFormulario();
+
+            if (!validacion.valido) {
+                mostrarAlerta('❌ ERROR', validacion.errores.join('\n'), 'error');
+                return;
+            }
+
+            const nombre = document.getElementById('nombre').value.trim();
+            const telefono = document.getElementById('telefono').value.trim();
+            const correo = document.getElementById('correo').value.trim();
+            const direccion = document.getElementById('direccion').value.trim();
+            const productos = document.getElementById('productos').value;
+
+            mostrarAlerta('⏳ PROCESANDO', 'Tu pedido se está enviando...', 'info');
+
+            // Simular envío (sin EmailJS)
+            setTimeout(() => {
+                mostrarAlerta('✅ ¡ÉXITO!', 'Tu pedido ha sido registrado. La dueña se contactará pronto.', 'success');
+                guardarPedido({ nombre, telefono, correo, direccion, productos });
+                limpiarFormulario();
+            }, 1500);
+        }
+
+        // ============================================================
+        // GUARDAR PEDIDO EN LOCALSTORAGE
+        // ============================================================
+        function guardarPedido(datos) {
+            let pedidos = JSON.parse(localStorage.getItem('pedidos')) || [];
+            pedidos.push({
+                ...datos,
+                fecha: new Date().toLocaleString()
+            });
+            localStorage.setItem('pedidos', JSON.stringify(pedidos));
+            console.log('Pedido guardado:', datos);
+        }
+
+        // ============================================================
+        // LIMPIAR FORMULARIO
+        // ============================================================
+        function limpiarFormulario() {
+            document.getElementById('nombre').value = '';
+            document.getElementById('telefono').value = '';
+            document.getElementById('correo').value = '';
+            document.getElementById('direccion').value = '';
+            document.querySelectorAll('.product-checkbox input[type="checkbox"]').forEach(cb => cb.checked = false);
+            actualizarProductosSeleccionados();
+        }
+
+        // ============================================================
+        // ABRIR WHATSAPP DESDE HEADER
+        // ============================================================
+        function openWhatsApp() {
+            abrirWhatsApp('Cliente');
+        }
+
+        // ============================================================
+        // ABRIR WHATSAPP CON MENSAJE PERSONALIZADO
+        // ============================================================
+        function abrirWhatsApp(nombre = 'Cliente') {
+            const numero = CONFIG.whatsapp.replace(/\D/g, '');
+            const mensaje = encodeURIComponent(
+                `¡Hola! Soy ${nombre}.\n\n` +
+                `Me interesa conocer los precios de los productos del catálogo de BLACK CROWN STORE.\n\n` +
+                `¿Podrías ayudarme? 👑`
+            );
+            
+            const url = `https://wa.me/${numero}?text=${mensaje}`;
+            window.open(url, '_blank');
+        }
+
+        // ============================================================
+        // CONTACTAR POR WHATSAPP DESDE FORMULARIO
+        // ============================================================
+        function contactarWhatsApp() {
+            const nombre = document.getElementById('nombre').value.trim() || 'Cliente';
+            const productos = document.getElementById('productos').value;
+
+            const productosMsg = productos !== 'Ningún producto seleccionado' 
+                ? `\n\nProductos de interés:\n${productos}`
+                : '';
+
+            const numero = CONFIG.whatsapp.replace(/\D/g, '');
+            const mensaje = encodeURIComponent(
+                `¡Hola! Soy ${nombre}.\n\n` +
+                `Tengo interés en los siguientes productos:${productosMsg}\n\n` +
+                `¿Cuáles son los precios? 👑`
+            );
+
+            const url = `https://wa.me/${numero}?text=${mensaje}`;
+            window.open(url, '_blank');
+        }
+
+        // ============================================================
+        // SCROLL SUAVE AL FORMULARIO
+        // ============================================================
+        function scrollToForm() {
+            const form = document.getElementById('contactForm');
+            form.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // ============================================================
+        // CARGAR DATOS DEL FORMULARIO
+        // ============================================================
+        function cargarDatos() {
+            const datos = localStorage.getItem('blackCrownDatos');
+            if (datos) {
+                const parsed = JSON.parse(datos);
+                document.getElementById('nombre').value = parsed.nombre || '';
+                document.getElementById('telefono').value = parsed.telefono || '';
+                document.getElementById('correo').value = parsed.correo || '';
+                document.getElementById('direccion').value = parsed.direccion || '';
+            }
+        }
+
+        // ============================================================
+        // GUARDAR DATOS DEL FORMULARIO
+        // ============================================================
+        function guardarDatos() {
+            const datos = {
+                nombre: document.getElementById('nombre').value,
+                telefono: document.getElementById('telefono').value,
+                correo: document.getElementById('correo').value,
+                direccion: document.getElementById('direccion').value
+            };
+            localStorage.setItem('blackCrownDatos', JSON.stringify(datos));
+        }
+
+        // ============================================================
+        // AGREGAR EVENT LISTENERS
+        // ============================================================
+        function agregarEventoFormulario() {
+            const inputs = document.querySelectorAll('.form-group input, .form-group textarea');
+            inputs.forEach(input => {
+                input.addEventListener('change', guardarDatos);
+            });
+        }
+
+        // ============================================================
+        // INICIALIZACIÓN
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🦈 BLACK CROWN STORE - Sistema Iniciado');
+            
+            cargarProductos();
+            cargarDatos();
+            agregarEventoFormulario();
+            actualizarProductosSeleccionados();
+
+            console.log('✅ Sistema cargado correctamente');
+        });
+    </script>
 </body>
 </html>
