@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🦈 BLACK CROWN STORE - Catálogo de Productos</title>
+    <title>🦈 Aqua store - Catálogo de Productos</title>
     
     <!-- LEAFLET MAP CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
@@ -228,13 +228,63 @@
             border-bottom: 1px solid #808080;
         }
 
-        .product-image {
+        .product-image-container {
+            position: relative;
             width: 100%;
             height: 220px;
+            overflow: hidden;
+        }
+
+        .product-image {
+            width: 100%;
+            height: 100%;
             object-fit: cover;
             display: block;
             border: 1px solid #808080;
             margin: 4px;
+        }
+
+        /* CAROUSEL CONTROLS */
+        .carousel-nav {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transform: translateY(-50%);
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .carousel-btn {
+            pointer-events: all;
+            background: rgba(0, 0, 0, 0.6) !important;
+            color: #ffff00 !important;
+            border: 1px solid #ffff00 !important;
+            padding: 4px 8px !important;
+            cursor: pointer;
+            font-size: 12px !important;
+            border-radius: 2px;
+            text-transform: none !important;
+            font-weight: normal !important;
+            margin: 0 4px;
+        }
+
+        .carousel-btn:hover {
+            background: rgba(0, 0, 0, 0.8) !important;
+        }
+
+        .carousel-indicator {
+            position: absolute;
+            bottom: 4px;
+            right: 8px;
+            background: rgba(0, 0, 0, 0.7);
+            color: #ffff00;
+            padding: 2px 6px;
+            border-radius: 2px;
+            font-size: 10px;
+            font-weight: bold;
         }
 
         .product-info {
@@ -652,11 +702,12 @@
 
     <script>
         // ============================================================
-        // CONFIGURACIÓN - ✅ NÚMERO CORREGIDO
+        // CONFIGURACIÓN
         // ============================================================
         const CONFIG = {
             email: 'neftamercado@gmail.com',
             whatsapp: '+52 465 122 7909',
+            imagePath: 'img/', // Ruta donde están tus imágenes
             emailjs_public_key: 'TU_PUBLIC_KEY_AQUI',
             emailjs_service_id: 'TU_SERVICE_ID_AQUI',
             emailjs_template_id: 'TU_TEMPLATE_ID_AQUI'
@@ -669,197 +720,108 @@
         let geosearch;
 
         // ============================================================
-        // BASE DE DATOS DE PRODUCTOS
+        // BASE DE DATOS DE PRODUCTOS CON IMÁGENES REALES
         // ============================================================
         const PRODUCTOS = [
             {
                 id: 1,
                 nombre: 'SOPORTE PARA CELULAR',
-                descripcion: 'En la compra de tu soporte, te llevas de regalo un dije de pentágrama de murcielago',
-                imagen: 'https://via.placeholder.com/300x220?text=Soporte+Celular',
+                descripcion: 'Soporte resistente para tu celular con regalo incluido',
+                imagenes: ['SOPORTE_PARA_CELULAR.jpg'],
                 categoria: 'Accesorios'
             },
             {
                 id: 2,
                 nombre: 'SET 2PZ BLUSA Y BOOMER',
-                descripcion: 'Boomer es un short de orales que da una ilusión de ser falda',
-                imagen: 'https://via.placeholder.com/300x220?text=Set+Blusa+Boomer',
+                descripcion: 'Conjunto de 2 piezas: Blusa + Boomer (short de orales)',
+                imagenes: ['SET_2PZ_BLUSA_Y_BOOMER.jpg'],
                 categoria: 'Ropa'
             },
             {
                 id: 3,
                 nombre: 'ZAPATILLAS DAGUES',
-                descripcion: 'Zapatillas 2.5 al 6. Se pueden adquirir a 10 pagos',
-                imagen: 'https://via.placeholder.com/300x220?text=Zapatillas+Dagues',
+                descripcion: 'Zapatillas tallas 2.5 al 6. Se pueden adquirir a 10 pagos',
+                imagenes: ['ZAPATILLAS_DAGUES.jpg'],
                 categoria: 'Calzado'
             },
             {
                 id: 4,
                 nombre: 'ZAPATILLAS SPIKE BUTTERFLY',
-                descripcion: 'Tallas 23 al 27mx. Diseño gótico exclusivo',
-                imagen: 'https://via.placeholder.com/300x220?text=Zapatillas+Spike',
+                descripcion: 'Tallas 23 al 27mx. Diseño gótico exclusivo con spikes',
+                imagenes: ['ZAPATILLAS_SPIKE_BUTTERFLY.jpg'],
                 categoria: 'Calzado'
             },
             {
                 id: 5,
                 nombre: 'ESPEJO LED ESTILO HOLLYWOOD',
                 descripcion: 'Espejo con iluminación LED profesional para maquillaje',
-                imagen: 'https://via.placeholder.com/300x220?text=Espejo+LED',
+                imagenes: ['ESPEJO_LED_ESTILO_HOLLYWOOD.jpg'],
                 categoria: 'Belleza'
             },
             {
                 id: 6,
                 nombre: 'BOTINES HERRAJES',
                 descripcion: 'Botines negros con herrajes de acero inoxidable',
-                imagen: 'https://via.placeholder.com/300x220?text=Botines',
+                imagenes: ['BOTINES_HERRAJES.jpg'],
                 categoria: 'Calzado'
             },
             {
                 id: 7,
                 nombre: 'LLAVEROS MONSTER EYE',
                 descripcion: 'Llaveros decorativos con diseño de ojos monster',
-                imagen: 'https://via.placeholder.com/300x220?text=Llaveros',
+                imagenes: ['LLAVEROS_MONSTER_EYE.jpg'],
                 categoria: 'Accesorios'
             },
             {
                 id: 8,
                 nombre: 'PAQUETE DE CALZONES DARKS 4PZ',
                 descripcion: 'Paquete de 4 piezas de calzones con diseño oscuro',
-                imagen: 'https://via.placeholder.com/300x220?text=Calzones+4pz',
+                imagenes: ['PAQUETE_DE_CALZONES DARKS_4PZ.jpg'],
                 categoria: 'Ropa'
             },
             {
                 id: 9,
                 nombre: 'PAQUETE DE CALZONES DARKS 10PZ',
                 descripcion: 'Paquete premium de 10 piezas de calzones',
-                imagen: 'https://via.placeholder.com/300x220?text=Calzones+10pz',
+                imagenes: ['PAQUETE_DE_CALZONES DARKS_10PZ.jpg'],
                 categoria: 'Ropa'
             },
             {
                 id: 10,
                 nombre: 'VESTIDO DUO COLOR',
                 descripcion: 'Vestido elegante combinado en dos colores. Tallas 2XS,XS,S,M,L,XL',
-                imagen: 'https://via.placeholder.com/300x220?text=Vestido+Duo',
+                imagenes: ['VESTIDO_DUO_COLOR.jpg'],
                 categoria: 'Ropa'
             },
             {
                 id: 11,
                 nombre: 'ZAPATILLAS DUO COLOR',
-                descripcion: 'Zapatillas combinadas en dos tonos. Tallas 22 al 27mx',
-                imagen: 'https://via.placeholder.com/300x220?text=Zapatillas+Duo',
+                descripcion: 'Zapatillas combinadas en dos tonos. Tallas 22 al 27mx. ¡Mira ambas versiones!',
+                imagenes: ['ZAPATILLAS_DUO_COLOR.jpg', 'ZAPATILLAS_DUO_COLOR2.jpg'],
                 categoria: 'Calzado'
             },
             {
                 id: 12,
-                nombre: 'ESPEJO ATAUD 20cm X 34cm',
-                descripcion: 'Espejo decorativo con forma de ataúd. Material premium',
-                imagen: 'https://via.placeholder.com/300x220?text=Espejo+Ataud',
+                nombre: 'ESPEJO ATAUD 20CM X 34CM',
+                descripcion: 'Espejo decorativo con forma de ataúd. Material premium. ¡Disponible en 2 tonos!',
+                imagenes: ['ESPEJO_ATAUD_20CM_X_34CM.jpg', 'ESPEJO_ATAUD_20CM_X_34CM2.jpg'],
+                categoria: 'Decoración'
+            },
+            {
+                id: 13,
+                nombre: 'BRAZALETES BAT PENTAGRAM',
+                descripcion: 'Brazaletes góticos con diseño de murciélago y pentágrama',
+                imagenes: ['BRAZALETES_BAT_PENTAGRAM.jpg'],
+                categoria: 'Accesorios'
+            },
+            {
+                id: 14,
+                nombre: 'TAZONES PARA CEREAL EN FORMA DE CALAVERA',
+                descripcion: 'Tazones decorativos en forma de calavera. ¡Mira nuestros 2 diseños!',
+                imagenes: ['TAZONES_PARA_CEREAL_EN_FORMA_DE_CRANEO.jpg', 'TAZONES_PARA_CEREAL_EN_FORMA_DE_CRANEO2.jpg'],
                 categoria: 'Decoración'
             }
         ];
-
-        // ============================================================
-        // INICIALIZAR MAPA CON LEAFLET + GEOSEARCH
-        // ============================================================
-        function inicializarMapa() {
-            map = L.map('mapContainer').setView([32.5149, -116.9718], 13);
-
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap contributors',
-                maxZoom: 19,
-                tileSize: 256
-            }).addTo(map);
-
-            const { GeoSearchControl, OpenStreetMapProvider } = window.GeoSearch;
-            const provider = new OpenStreetMapProvider();
-
-            geosearch = new GeoSearchControl({
-                provider: provider,
-                style: 'bar',
-                showMarker: true,
-                showPopup: false,
-                autoClose: true,
-                retainZoomLevel: false,
-                animateZoom: true,
-                enableHighAccuracy: true,
-                autoCompleteDelay: 250,
-                searchLabel: '🔍 Buscar ubicación...',
-                keepResult: true,
-                marker: {
-                    icon: L.icon({
-                        iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png',
-                        iconSize: [25, 41],
-                        iconAnchor: [12, 41],
-                        popupAnchor: [1, -34],
-                        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
-                        shadowSize: [41, 41]
-                    })
-                }
-            });
-
-            map.addControl(geosearch);
-
-            map.on('geosearch/showlocation', function(result) {
-                const lat = result.location.y;
-                const lng = result.location.x;
-                seleccionarUbicacion(lat, lng);
-            });
-
-            map.on('click', function(e) {
-                const lat = e.latlng.lat;
-                const lng = e.latlng.lng;
-                seleccionarUbicacion(lat, lng);
-            });
-
-            marker = L.marker([32.5149, -116.9718], {
-                draggable: true,
-                title: 'Tu ubicación'
-            }).addTo(map).bindPopup('📍 Tu ubicación de entrega');
-
-            marker.on('dragend', function() {
-                const pos = marker.getLatLng();
-                seleccionarUbicacion(pos.lat, pos.lng);
-            });
-
-            setTimeout(() => map.invalidateSize(), 100);
-        }
-
-        // ============================================================
-        // SELECCIONAR UBICACIÓN EN EL MAPA
-        // ============================================================
-        function seleccionarUbicacion(lat, lng) {
-            selectedCoords = { lat, lng };
-            marker.setLatLng([lat, lng]);
-            map.setView([lat, lng], 16);
-            obtenerDireccion(lat, lng);
-        }
-
-        // ============================================================
-        // OBTENER DIRECCIÓN DESDE COORDENADAS
-        // ============================================================
-        function obtenerDireccion(lat, lng) {
-            const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`;
-
-            fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    const direccion = data.address.road || data.address.street || 
-                                    data.address.neighbourhood || data.address.city || 
-                                    `${lat}, ${lng}`;
-                    
-                    document.getElementById('direccion').value = direccion;
-                    document.getElementById('mapInfo').textContent = `✅ Ubicación seleccionada: ${direccion}`;
-                    guardarDatos();
-                    mostrarAlerta('✅ UBICACIÓN GUARDADA', `Dirección: ${direccion}`, 'success');
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    const coordsText = `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
-                    document.getElementById('direccion').value = coordsText;
-                    document.getElementById('mapInfo').textContent = `✅ Ubicación: ${coordsText}`;
-                    guardarDatos();
-                });
-        }
 
         // ============================================================
         // CARGAR PRODUCTOS EN GALERÍA
@@ -871,11 +833,37 @@
             PRODUCTOS.forEach((producto) => {
                 const card = document.createElement('div');
                 card.className = 'product-card';
+                
+                // Generar HTML para carousel si hay múltiples imágenes
+                let imagenHTML = '';
+                let carouselHTML = '';
+                
+                if (producto.imagenes.length > 1) {
+                    imagenHTML = `
+                        <div class="product-image-container">
+                            <img src="${CONFIG.imagePath}${producto.imagenes[0]}" alt="${producto.nombre}" class="product-image" onerror="this.src='https://via.placeholder.com/300x220?text=Imagen+No+Disponible'" data-product-id="${producto.id}" data-current-image="0">
+                            <div class="carousel-nav">
+                                <button class="carousel-btn" onclick="cambiarImagen(${producto.id}, -1)">◀ Anterior</button>
+                                <button class="carousel-btn" onclick="cambiarImagen(${producto.id}, 1)">Siguiente ▶</button>
+                            </div>
+                            <div class="carousel-indicator">
+                                <span id="img-count-${producto.id}">1</span>/${producto.imagenes.length}
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    imagenHTML = `
+                        <div class="product-image-container">
+                            <img src="${CONFIG.imagePath}${producto.imagenes[0]}" alt="${producto.nombre}" class="product-image" onerror="this.src='https://via.placeholder.com/300x220?text=Imagen+No+Disponible'">
+                        </div>
+                    `;
+                }
+
                 card.innerHTML = `
                     <div class="product-card-header">
                         📦 ${producto.categoria}
                     </div>
-                    <img src="${producto.imagen}" alt="${producto.nombre}" class="product-image" onerror="this.src='https://via.placeholder.com/300x220?text=No+Disponible'">
+                    ${imagenHTML}
                     <div class="product-info">
                         <div class="product-name">${producto.nombre}</div>
                         <div class="product-description">${producto.descripcion}</div>
@@ -885,8 +873,28 @@
                         </div>
                     </div>
                 `;
+                
                 grid.appendChild(card);
+                
+                // Guardar datos del carousel
+                window[`imagenes_${producto.id}`] = producto.imagenes;
             });
+        }
+
+        // ============================================================
+        // CAMBIAR IMAGEN EN CAROUSEL
+        // ============================================================
+        function cambiarImagen(productId, direccion) {
+            const img = document.querySelector(`img[data-product-id="${productId}"]`);
+            if (!img) return;
+
+            const imagenes = window[`imagenes_${productId}`];
+            let currentIndex = parseInt(img.dataset.currentImage);
+            currentIndex = (currentIndex + direccion + imagenes.length) % imagenes.length;
+
+            img.src = CONFIG.imagePath + imagenes[currentIndex];
+            img.dataset.currentImage = currentIndex;
+            document.getElementById(`img-count-${productId}`).textContent = currentIndex + 1;
         }
 
         // ============================================================
@@ -987,7 +995,7 @@
         }
 
         // ============================================================
-        // ENVIAR PEDIDO POR EMAIL
+        // ENVIAR PEDIDO
         // ============================================================
         async function enviarPedido() {
             const validacion = validarFormulario();
@@ -1013,7 +1021,7 @@
         }
 
         // ============================================================
-        // GUARDAR PEDIDO EN LOCALSTORAGE
+        // GUARDAR PEDIDO
         // ============================================================
         function guardarPedido(datos) {
             let pedidos = JSON.parse(localStorage.getItem('pedidos')) || [];
@@ -1039,15 +1047,12 @@
         }
 
         // ============================================================
-        // ABRIR WHATSAPP DESDE HEADER
+        // WHATSAPP FUNCTIONS
         // ============================================================
         function openWhatsApp() {
             abrirWhatsApp('Cliente');
         }
 
-        // ============================================================
-        // ABRIR WHATSAPP CON MENSAJE PERSONALIZADO
-        // ============================================================
         function abrirWhatsApp(nombre = 'Cliente') {
             const numero = CONFIG.whatsapp.replace(/\D/g, '');
             const mensaje = encodeURIComponent(
@@ -1060,9 +1065,6 @@
             window.open(url, '_blank');
         }
 
-        // ============================================================
-        // CONTACTAR POR WHATSAPP DESDE FORMULARIO
-        // ============================================================
         function contactarWhatsApp() {
             const nombre = document.getElementById('nombre').value.trim() || 'Cliente';
             const productos = document.getElementById('productos').value;
@@ -1086,16 +1088,13 @@
         }
 
         // ============================================================
-        // SCROLL SUAVE AL FORMULARIO
+        // FORMULARIO FUNCTIONS
         // ============================================================
         function scrollToForm() {
             const form = document.getElementById('contactForm');
             form.scrollIntoView({ behavior: 'smooth' });
         }
 
-        // ============================================================
-        // CARGAR DATOS DEL FORMULARIO
-        // ============================================================
         function cargarDatos() {
             const datos = localStorage.getItem('blackCrownDatos');
             if (datos) {
@@ -1107,9 +1106,6 @@
             }
         }
 
-        // ============================================================
-        // GUARDAR DATOS DEL FORMULARIO
-        // ============================================================
         function guardarDatos() {
             const datos = {
                 nombre: document.getElementById('nombre').value,
@@ -1120,14 +1116,108 @@
             localStorage.setItem('blackCrownDatos', JSON.stringify(datos));
         }
 
-        // ============================================================
-        // AGREGAR EVENT LISTENERS
-        // ============================================================
         function agregarEventoFormulario() {
             const inputs = document.querySelectorAll('.form-group input, .form-group textarea');
             inputs.forEach(input => {
                 input.addEventListener('change', guardarDatos);
             });
+        }
+
+        // ============================================================
+        // MAPA FUNCTIONS
+        // ============================================================
+        function inicializarMapa() {
+            map = L.map('mapContainer').setView([32.5149, -116.9718], 13);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors',
+                maxZoom: 19,
+                tileSize: 256
+            }).addTo(map);
+
+            const { GeoSearchControl, OpenStreetMapProvider } = window.GeoSearch;
+            const provider = new OpenStreetMapProvider();
+
+            geosearch = new GeoSearchControl({
+                provider: provider,
+                style: 'bar',
+                showMarker: true,
+                showPopup: false,
+                autoClose: true,
+                retainZoomLevel: false,
+                animateZoom: true,
+                enableHighAccuracy: true,
+                autoCompleteDelay: 250,
+                searchLabel: '🔍 Buscar ubicación...',
+                keepResult: true,
+                marker: {
+                    icon: L.icon({
+                        iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png',
+                        iconSize: [25, 41],
+                        iconAnchor: [12, 41],
+                        popupAnchor: [1, -34],
+                        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+                        shadowSize: [41, 41]
+                    })
+                }
+            });
+
+            map.addControl(geosearch);
+
+            map.on('geosearch/showlocation', function(result) {
+                const lat = result.location.y;
+                const lng = result.location.x;
+                seleccionarUbicacion(lat, lng);
+            });
+
+            map.on('click', function(e) {
+                const lat = e.latlng.lat;
+                const lng = e.latlng.lng;
+                seleccionarUbicacion(lat, lng);
+            });
+
+            marker = L.marker([32.5149, -116.9718], {
+                draggable: true,
+                title: 'Tu ubicación'
+            }).addTo(map).bindPopup('📍 Tu ubicación de entrega');
+
+            marker.on('dragend', function() {
+                const pos = marker.getLatLng();
+                seleccionarUbicacion(pos.lat, pos.lng);
+            });
+
+            setTimeout(() => map.invalidateSize(), 100);
+        }
+
+        function seleccionarUbicacion(lat, lng) {
+            selectedCoords = { lat, lng };
+            marker.setLatLng([lat, lng]);
+            map.setView([lat, lng], 16);
+            obtenerDireccion(lat, lng);
+        }
+
+        function obtenerDireccion(lat, lng) {
+            const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const direccion = data.address.road || data.address.street || 
+                                    data.address.neighbourhood || data.address.city || 
+                                    `${lat}, ${lng}`;
+                    
+                    document.getElementById('direccion').value = direccion;
+                    document.getElementById('mapInfo').textContent = `✅ Ubicación seleccionada: ${direccion}`;
+                    guardarDatos();
+                    mostrarAlerta('✅ UBICACIÓN GUARDADA', `Dirección: ${direccion}`, 'success');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    const coordsText = `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+                    document.getElementById('direccion').value = coordsText;
+                    document.getElementById('mapInfo').textContent = `✅ Ubicación: ${coordsText}`;
+                    guardarDatos();
+                });
         }
 
         // ============================================================
