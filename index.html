@@ -1,1 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BLACK CROWN STORE</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+        header { background: #000; color: #fff; padding: 10px; text-align: center; }
+        .gallery { display: flex; flex-wrap: wrap; justify-content: space-around; }
+        .product { border: 1px solid #ddd; margin: 10px; padding: 10px; width: 200px; }
+        .form-group { margin: 10px 0; }
+        .map { height: 300px; }
+    </style>
+    <script src="https://www.emailjs.com/dist/email.min.js"></script>
+</head>
+<body>
+<header>
+    <h1>BLACK CROWN STORE</h1>
+</header>
 
+<main>
+    <section class="gallery">
+        <div class="product">
+            <h3>SOPORTE PARA CELULAR</h3>
+            <img src="image_url" alt="SOPORTE PARA CELULAR">
+            <p>Descripción del producto...</p>
+        </div>
+        <div class="product">
+            <h3>SET 2PZ BLUSA Y BOOMER</h3>
+            <img src="image_url" alt="SET 2PZ BLUSA Y BOOMER">
+            <p>Descripción del producto...</p>
+        </div>
+        <div class="product">
+            <h3>ZAPATILLAS DAGUES</h3>
+            <img src="image_url" alt="ZAPATILLAS DAGUES">
+            <p>Descripción del producto...</p>
+        </div>
+        <div class="product">
+            <h3>ZAPATILLAS SPIKE BUTTERFLY</h3>
+            <img src="image_url" alt="ZAPATILLAS SPIKE BUTTERFLY">
+            <p>Descripción del producto...</p>
+        </div>
+        <div class="product">
+            <h3>ESPEJO LED ESTILO HOLLYWOOD</h3>
+            <img src="image_url" alt="ESPEJO LED ESTILO HOLLYWOOD">
+            <p>Descripción del producto...</p>
+        </div>
+        <div class="product">
+            <h3>BOTINES HERRAJES</h3>
+            <img src="image_url" alt="BOTINES HERRAJES">
+            <p>Descripción del producto...</p>
+        </div>
+        <div class="product">
+            <h3>LLAVEROS MONSTER EYE</h3>
+            <img src="image_url" alt="LLAVEROS MONSTER EYE">
+            <p>Descripción del producto...</p>
+        </div>
+        <div class="product">
+            <h3>PAQUETE DE CALZONES DARKS 4PZ</h3>
+            <img src="image_url" alt="PAQUETE DE CALZONES DARKS 4PZ">
+            <p>Descripción del producto...</p>
+        </div>
+        <div class="product">
+            <h3>PAQUETE DE CALZONES DARKS 10PZ</h3>
+            <img src="image_url" alt="PAQUETE DE CALZONES DARKS 10PZ">
+            <p>Descripción del producto...</p>
+        </div>
+        <div class="product">
+            <h3>VESTIDO DUO COLOR</h3>
+            <img src="image_url" alt="VESTIDO DUO COLOR">
+            <p>Descripción del producto...</p>
+        </div>
+        <div class="product">
+            <h3>ZAPATILLAS DUO COLOR</h3>
+            <img src="image_url" alt="ZAPATILLAS DUO COLOR">
+            <p>Descripción del producto...</p>
+        </div>
+        <div class="product">
+            <h3>ESPEJO ATAUD 20cm X 34cm</h3>
+            <img src="image_url" alt="ESPEJO ATAUD 20cm X 34cm">
+            <p>Descripción del producto...</p>
+        </div>
+        <!-- Add more products as necessary -->
+    </section>
+
+    <section>
+        <h2>Formulario de Cliente</h2>
+        <form id="clientForm">
+            <div class="form-group">
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="nombre" name="nombre" required>
+            </div>
+            <div class="form-group">
+                <label for="telefono">Teléfono:</label>
+                <input type="tel" id="telefono" name="telefono" required>
+            </div>
+            <div class="form-group">
+                <label for="direccion">Dirección:</label>
+                <input type="text" id="direccion" name="direccion" required>
+            </div>
+            <div class="form-group">
+                <label for="correo">Correo:</label>
+                <input type="email" id="correo" name="correo" required>
+            </div>
+            <div class="form-group">
+                <button type="submit">Enviar</button>
+            </div>
+        </form>
+    </section>
+
+    <section>
+        <h2>Selecciona tu ubicación</h2>
+        <div id="map" class="map"></div>
+    </section>
+
+    <section>
+        <h2>Formulario de Pedido</h2>
+        <form id="orderForm">
+            <div class="form-group">
+                <label for="product">Selecciona un Producto:</label>
+                <select id="product" name="product">
+                    <option value="SOPORTE PARA CELULAR">SOPORTE PARA CELULAR</option>
+                    <option value="SET 2PZ BLUSA Y BOOMER">SET 2PZ BLUSA Y BOOMER</option>
+                    <option value="ZAPATILLAS DAGUES">ZAPATILLAS DAGUES</option>
+                    <option value="ZAPATILLAS SPIKE BUTTERFLY">ZAPATILLAS SPIKE BUTTERFLY</option>
+                    <option value="ESPEJO LED ESTILO HOLLYWOOD">ESPEJO LED ESTILO HOLLYWOOD</option>
+                    <option value="BOTINES HERRAJES">BOTINES HERRAJES</option>
+                    <option value="LLAVEROS MONSTER EYE">LLAVEROS MONSTER EYE</option>
+                    <option value="PAQUETE DE CALZONES DARKS 4PZ">PAQUETE DE CALZONES DARKS 4PZ</option>
+                    <option value="PAQUETE DE CALZONES DARKS 10PZ">PAQUETE DE CALZONES DARKS 10PZ</option>
+                    <option value="VESTIDO DUO COLOR">VESTIDO DUO COLOR</option>
+                    <option value="ZAPATILLAS DUO COLOR">ZAPATILLAS DUO COLOR</option>
+                    <option value="ESPEJO ATAUD 20cm X 34cm">ESPEJO ATAUD 20cm X 34cm</option>
+                </select>
+            </div>
+            <button type="submit">Ordenar</button>
+        </form>
+    </section>
+</main>
+
+<footer>
+    <p>Contáctanos por WhatsApp: <a href="https://wa.me/526461227909">+52 1 646 122 7909</a> o envíanos un correo a <a href="mailto:neftamercado@gmail.com">neftamercado@gmail.com</a></p>
+</footer>
+
+<script>
+    // Initialize EmailJS
+    emailjs.init('YOUR_USER_ID');
+
+    document.getElementById('clientForm').onsubmit = function(event) {
+        event.preventDefault();
+        emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', {
+            nombre: document.getElementById('nombre').value,
+            telefono: document.getElementById('telefono').value,
+            direccion: document.getElementById('direccion').value,
+            correo: document.getElementById('correo').value
+        })
+        .then(function(response) {
+            alert('Mensaje enviado: ' + response.text);
+        }, function(error) {
+            alert('Error al enviar mensaje: ' + error.text);
+        });
+    };
+
+    // Initialize Google Maps
+    function initMap() {
+        var location = { lat: 19.432608, lng: -99.133209 }; // Example coordinates
+        var map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 12,
+            center: location,
+        });
+        var marker = new google.maps.Marker({
+            position: location,
+            map: map,
+        });
+    }
+</script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap"></script>
+</body>
+</html>
