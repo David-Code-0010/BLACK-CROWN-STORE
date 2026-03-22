@@ -7,7 +7,7 @@
     
     <!-- LEAFLET MAP CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-control-geocoder/1.13.0/Control.Geocoder.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-geosearch/3.8.0/geosearch.css" />
     
     <style>
         * {
@@ -373,6 +373,50 @@
             display: block;
             border-radius: 2px;
             z-index: 10;
+            position: relative;
+        }
+
+        /* ESTILOS PARA EL BUSCADOR GEOSEARCH */
+        .geosearch-control {
+            position: absolute !important;
+            top: 10px !important;
+            right: 10px !important;
+            z-index: 1000 !important;
+        }
+
+        .geosearch-control input {
+            background: #ffffff !important;
+            border: 2px solid #808080 !important;
+            border-radius: 2px !important;
+            padding: 8px 12px !important;
+            font-family: 'MS Sans Serif', Tahoma, sans-serif !important;
+            font-size: 11px !important;
+            box-shadow: inset 1px 1px 0 #ffffff, inset -1px -1px 0 #808080 !important;
+            width: 200px !important;
+        }
+
+        .geosearch-control input:focus {
+            outline: none !important;
+            background: #e8f0f8 !important;
+        }
+
+        .geosearch-popup {
+            background: #c0c0c0 !important;
+            border: 2px solid #808080 !important;
+            border-radius: 2px !important;
+            box-shadow: inset 1px 1px 0 #dfdfdf, inset -1px -1px 0 #808080 !important;
+        }
+
+        .geosearch-popup li {
+            background: #c0c0c0 !important;
+            border-bottom: 1px solid #dfdfdf !important;
+            padding: 6px 8px !important;
+            font-size: 11px !important;
+            color: var(--text-dark) !important;
+        }
+
+        .geosearch-popup li:hover {
+            background: #dfdfdf !important;
         }
 
         .map-info {
@@ -517,6 +561,10 @@
             #mapContainer {
                 height: 300px;
             }
+
+            .geosearch-control input {
+                width: 150px !important;
+            }
         }
     </style>
 </head>
@@ -568,7 +616,7 @@
                     </div>
                     <div class="form-group">
                         <label for="direccion">Dirección</label>
-                        <input type="text" id="direccion" placeholder="Selecciona ubicación en el mapa">
+                        <input type="text" id="direccion" placeholder="Selecciona ubicación en el mapa o busca con la lupa">
                     </div>
                     <div class="form-group" style="grid-column: 1 / -1;">
                         <label for="productos">Productos Seleccionados</label>
@@ -576,11 +624,11 @@
                     </div>
                 </div>
 
-                <!-- MAPA INTERACTIVO -->
+                <!-- MAPA INTERACTIVO CON BUSCADOR -->
                 <div class="map-container">
-                    <div class="map-title">📍 Haz click en el mapa para seleccionar tu ubicación (Laptop/Móvil)</div>
+                    <div class="map-title">📍 Busca tu ubicación con la lupa 🔍 o haz click en el mapa (Laptop/Móvil/Tablet)</div>
                     <div id="mapContainer"></div>
-                    <div class="map-info" id="mapInfo">💡 Haz click en cualquier lugar del mapa para marcar tu ubicación de entrega</div>
+                    <div class="map-info" id="mapInfo">💡 Usa la lupa para buscar tu ubicación o haz click en el mapa para marcar tu dirección de entrega</div>
                 </div>
 
                 <!-- BOTONES DE ACCIÓN -->
@@ -601,7 +649,7 @@
 
     <!-- LEAFLET JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-control-geocoder/1.13.0/Control.Geocoder.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-geosearch/3.8.0/geosearch.umd.js"></script>
 
     <script>
         // ============================================================
@@ -609,7 +657,7 @@
         // ============================================================
         const CONFIG = {
             email: 'neftamercado@gmail.com',
-            whatsapp: '+52 1 646 122 7909',
+            whatsapp: '52646122 7909',
             emailjs_public_key: 'TU_PUBLIC_KEY_AQUI',
             emailjs_service_id: 'TU_SERVICE_ID_AQUI',
             emailjs_template_id: 'TU_TEMPLATE_ID_AQUI'
@@ -619,6 +667,7 @@
         let map;
         let marker;
         let selectedCoords = null;
+        let geosearch;
 
         // ============================================================
         // BASE DE DATOS DE PRODUCTOS
@@ -711,7 +760,7 @@
         ];
 
         // ============================================================
-        // INICIALIZAR MAPA CON LEAFLET
+        // INICIALIZAR MAPA CON LEAFLET + GEOSEARCH
         // ============================================================
         function inicializarMapa() {
             // Crear mapa centrado en Tijuana
@@ -724,11 +773,48 @@
                 tileSize: 256
             }).addTo(map);
 
+            // Agregar GeoSearch (buscador con lupa)
+            const { GeoSearchControl, OpenStreetMapProvider } = window.GeoSearch;
+
+            const provider = new OpenStreetMapProvider();
+
+            geosearch = new GeoSearchControl({
+                provider: provider,
+                style: 'bar',
+                showMarker: true,
+                showPopup: false,
+                autoClose: true,
+                retainZoomLevel: false,
+                animateZoom: true,
+                enableHighAccuracy: true,
+                autoCompleteDelay: 250,
+                searchLabel: '🔍 Buscar ubicación...',
+                keepResult: true,
+                marker: {
+                    icon: L.icon({
+                        iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png',
+                        iconSize: [25, 41],
+                        iconAnchor: [12, 41],
+                        popupAnchor: [1, -34],
+                        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+                        shadowSize: [41, 41]
+                    })
+                }
+            });
+
+            map.addControl(geosearch);
+
+            // Evento cuando se selecciona un resultado del buscador
+            map.on('geosearch/showlocation', function(result) {
+                const lat = result.location.y;
+                const lng = result.location.x;
+                seleccionarUbicacion(lat, lng);
+            });
+
             // Evento para click en el mapa
             map.on('click', function(e) {
                 const lat = e.latlng.lat;
                 const lng = e.latlng.lng;
-                
                 seleccionarUbicacion(lat, lng);
             });
 
@@ -876,7 +962,7 @@
             }
 
             if (!direccion || direccion.length < 5) {
-                errores.push('Por favor selecciona una ubicación en el mapa');
+                errores.push('Por favor selecciona una ubicación en el mapa o busca con la lupa');
             }
 
             if (productosSeleccionados === 0) {
@@ -932,7 +1018,6 @@
 
             mostrarAlerta('⏳ PROCESANDO', 'Tu pedido se está enviando...', 'info');
 
-            // Simular envío (sin EmailJS)
             setTimeout(() => {
                 mostrarAlerta('✅ ¡ÉXITO!', 'Tu pedido ha sido registrado. La dueña se contactará pronto.', 'success');
                 guardarPedido({ nombre, telefono, correo, direccion, productos, coords: selectedCoords });
@@ -963,7 +1048,7 @@
             document.getElementById('direccion').value = '';
             document.querySelectorAll('.product-checkbox input[type="checkbox"]').forEach(cb => cb.checked = false);
             actualizarProductosSeleccionados();
-            document.getElementById('mapInfo').textContent = '💡 Haz click en cualquier lugar del mapa para marcar tu ubicación de entrega';
+            document.getElementById('mapInfo').textContent = '💡 Usa la lupa para buscar tu ubicación o haz click en el mapa para marcar tu dirección de entrega';
         }
 
         // ============================================================
